@@ -1,1 +1,2 @@
 testing co-authore name in commit message
+- fist commit gone. giving second try
