@@ -19,6 +19,12 @@ function App() {
     setTaskText(""); // Clear the input field
   };
 
+  // Function to handle deleting a task
+  const deleteTask = (id) => {
+    const updateTasks = tasks.filter((task) => task.id !== id);
+    setTasks(updateTasks);
+  }
+
   return (
     <div className="app">
       <h1>To-Do List</h1>
@@ -38,7 +44,7 @@ function App() {
           {tasks.map((task) => (
             <li className="task-item" key={task.id}>
               <span>{task.text}</span>
-              <button>Delete</button>
+              <button onClick={() => deleteTask(task.id)}>Delete</button>
             </li>
           ))}
         </ul>
