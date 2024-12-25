@@ -25,6 +25,13 @@ function App() {
     setTasks(updateTasks);
   }
 
+  // function to toggle task completion
+  const toggleTaskCompletion = (id) => {
+    const updatedTasks = tasks.map((task) => task.id === id ? {...task, completed: !task.completed } : task );
+
+    setTasks(updatedTasks); //Update the tasks array
+  };
+
   return (
     <div className="app">
       <h1>To-Do List</h1>
@@ -43,9 +50,16 @@ function App() {
         <ul className="task-list">
           {tasks.map((task) => (
             <li className="task-item" key={task.id}>
-              <span>{task.text}</span>
-              <button onClick={() => deleteTask(task.id)}>Delete</button>
-            </li>
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => toggleTaskCompletion(task.id)}
+            />
+            <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>
+              {task.text}
+            </span>
+            <button onClick={() => deleteTask(task.id)}>Delete</button>
+          </li>
           ))}
         </ul>
       </div>
