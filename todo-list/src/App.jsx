@@ -32,6 +32,27 @@ function App() {
     setTasks(updatedTasks); //Update the tasks array
   };
 
+  // State to track which task is being edited
+  const [editingTaskId, setEditingTaskId] = useState(null);
+  const [editingText, setEditingText] = useState("");
+
+  // Function to start editing
+  const startEditing = (id, currentText) => {
+    setEditingTaskId(id);
+    setEditingText(currentText);
+  };
+
+  // Function to save the edited task
+  const saveTask = () => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === editingTaskId ? { ...task, text: editingText } : task
+    );
+    setTasks(updatedTasks);
+    setEditingTaskId(null); // Exit edit mode
+    setEditingText("");
+  };
+
+
   return (
     <div className="app">
       <h1>To-Do List</h1>
@@ -50,16 +71,30 @@ function App() {
         <ul className="task-list">
           {tasks.map((task) => (
             <li className="task-item" key={task.id}>
-            <input
-              type="checkbox"
-              checked={task.completed}
-              onChange={() => toggleTaskCompletion(task.id)}
-            />
-            <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>
-              {task.text}
-            </span>
-            <button onClick={() => deleteTask(task.id)}>Delete</button>
-          </li>
+              {editingTaskId === task.id ? (
+                <div>
+                  <input
+                    type="text"
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                  />
+                  <button onClick={saveTask}>Save</button>
+                </div>
+              ) : (
+                <div>
+                  <input
+                    type="checkbox"
+                    checked={task.completed}
+                    onChange={() => toggleTaskCompletion(task.id)}
+                  />
+                  <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>
+                    {task.text}
+                  </span>
+                  <button onClick={() => deleteTask(task.id)}>Delete</button>
+                  <button onClick={() => startEditing(task.id, task.text)}>Edit</button>
+                </div>
+              )}
+            </li>
           ))}
         </ul>
       </div>
