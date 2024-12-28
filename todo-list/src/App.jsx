@@ -52,46 +52,48 @@ function App() {
     setEditingText("");
   };
 
-
   return (
-    <div className="app">
-      <h1>To-Do List</h1>
+    <div className="app container mx-auto p-4">
+      <h1 className="text-3xl font-bold text-blue-500 mb-4">To-Do List</h1>
       <div className="task-container">
         {/* Input field and button */}
-        <div className="task-input">
+        <div className="task-input flex mb-4">
           <input
             type="text"
             placeholder="Enter a task..."
             value={taskText} // Controlled input
             onChange={(e) => setTaskText(e.target.value)} // Update state on input
+            className="border rounded p-2 flex-grow mr-2"
           />
-          <button onClick={addTask}>Add Task</button>
+          <button onClick={addTask} className="bg-blue-500 text-white p-2 rounded">Add Task</button>
         </div>
         {/* Task list */}
         <ul className="task-list">
           {tasks.map((task) => (
-            <li className="task-item" key={task.id}>
+            <li className="task-item mb-2" key={task.id}>
               {editingTaskId === task.id ? (
-                <div>
+                <div className="flex">
                   <input
                     type="text"
                     value={editingText}
                     onChange={(e) => setEditingText(e.target.value)}
+                    className="border rounded p-2 flex-grow mr-2"
                   />
-                  <button onClick={saveTask}>Save</button>
+                  <button onClick={saveTask} className="bg-green-500 text-white p-2 rounded">Save</button>
                 </div>
               ) : (
-                <div>
+                <div className="flex items-center">
                   <input
+                    className="mr-2"
                     type="checkbox"
                     checked={task.completed}
                     onChange={() => toggleTaskCompletion(task.id)}
                   />
-                  <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>
+                  <span className={`flex-grow ${task.completed ? "line-through" : ""}`}>
                     {task.text}
                   </span>
-                  <button onClick={() => deleteTask(task.id)}>Delete</button>
-                  <button onClick={() => startEditing(task.id, task.text)}>Edit</button>
+                  <button onClick={() => deleteTask(task.id)} className="bg-red-500 text-white p-2 rounded mr-2">Delete</button>
+                  <button onClick={() => startEditing(task.id, task.text)} className="bg-yellow-500 text-white p-2 rounded">Edit</button>
                 </div>
               )}
             </li>
