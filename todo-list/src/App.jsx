@@ -52,6 +52,19 @@ function App() {
     setEditingText("");
   };
 
+  const addTaskByEnterKey = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addTask();
+  }}
+
+  const saveTaskByEnterKey = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      saveTask();
+    }
+  }
+
   return (
     <div className="app container mx-auto p-4">
       <h1 className="text-3xl font-bold text-blue-500 mb-4">To-Do List</h1>
@@ -61,6 +74,7 @@ function App() {
           <input
             type="text"
             placeholder="Enter a task..."
+            onKeyDown={addTaskByEnterKey}
             value={taskText} // Controlled input
             onChange={(e) => setTaskText(e.target.value)} // Update state on input
             className="border rounded p-2 flex-grow mr-2"
@@ -76,6 +90,7 @@ function App() {
                   <input
                     type="text"
                     value={editingText}
+                    onKeyDown={saveTaskByEnterKey}
                     onChange={(e) => setEditingText(e.target.value)}
                     className="border rounded p-2 flex-grow mr-2"
                   />
