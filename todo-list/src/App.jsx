@@ -113,14 +113,14 @@ function App() {
                   <button onClick={saveTask} className="bg-green-500 text-white p-2 rounded">Save</button>
                 </div>
               ) : (
-                <div onClick={() => toggleTaskCompletion(task.id)} className="flex items-center">
+                <div className="flex items-center">
                   <input
                     className="mr-2"
                     type="checkbox"
                     checked={task.completed}
                     onChange={() => toggleTaskCompletion(task.id)}
                   />
-                  <span className={`flex-grow ${task.completed ? "line-through" : ""}`}>
+                  <span className={`flex-grow ${task.completed ? "line-through" : ""}`} onClick={() => toggleTaskCompletion(task.id)} >
                     {task.text}
                   </span>
                   <button onClick={() => deleteTask(task.id)} className="bg-red-500 text-white p-2 rounded mr-2">Delete</button>
