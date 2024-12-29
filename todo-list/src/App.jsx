@@ -1,9 +1,24 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function App() {
   // State to store tasks
   const [tasks, setTasks] = useState([]);
   const [taskText, setTaskText] = useState(""); // To store input value
+  const [editingTaskId, setEditingTaskId] = useState(null); // State to track which task is being edited
+  const [editingText, setEditingText] = useState("");
+
+  // Load tasks from localStorage
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    setTasks(savedTasks);
+  }, []);
+
+  // Save tasks to localStorage
+  useEffect(() => {
+    if (tasks.length > 0) {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+  }, [tasks]);
 
   // Function to handle adding a task
   const addTask = () => {
@@ -31,10 +46,6 @@ function App() {
 
     setTasks(updatedTasks); //Update the tasks array
   };
-
-  // State to track which task is being edited
-  const [editingTaskId, setEditingTaskId] = useState(null);
-  const [editingText, setEditingText] = useState("");
 
   // Function to start editing
   const startEditing = (id, currentText) => {
@@ -82,6 +93,11 @@ function App() {
           <button onClick={addTask} className="bg-blue-500 text-white p-2 rounded">Add Task</button>
         </div>
         {/* Task list */}
+        <div className="task-summary">
+          <p>Total Tasks: {tasks.length}</p>
+          <p>Completed Tasks: {tasks.filter((task) => task.completed).length}</p>
+          <p>Pending Tasks: {tasks.filter((task) => !task.completed).length}</p>
+        </div>
         <ul className="task-list">
           {tasks.map((task) => (
             <li className="task-item mb-2" key={task.id}>
