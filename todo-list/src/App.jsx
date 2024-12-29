@@ -97,7 +97,7 @@ function App() {
                   <button onClick={saveTask} className="bg-green-500 text-white p-2 rounded">Save</button>
                 </div>
               ) : (
-                <div className="flex items-center">
+                <div onClick={() => toggleTaskCompletion(task.id)} className="flex items-center">
                   <input
                     className="mr-2"
                     type="checkbox"
