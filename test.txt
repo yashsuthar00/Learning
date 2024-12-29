@@ -1,8 +1,0 @@
-cletesting co-authore name in commit message
-- fist commit gone. giving second try
-- secong goes wrong too. giving third try
-- 4th try
--5th try
--finally it's done
-- this time it will work finally.
-- one more time.
