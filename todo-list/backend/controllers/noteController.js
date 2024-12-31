@@ -1,11 +1,13 @@
 const asyncHandler = require('express-async-handler');
+const Note = require('../models/noteModel');
 
 //@desc Get all notes
 //@route GET /api/notes
 //@access public
 
 const getNotes = asyncHandler(async (req, res) => {
-    res.status(200).json({messsage: "get Your notes"});
+    const notes = await Note.find({});
+    res.status(200).json(notes);
 });
 
 //@desc create new note
@@ -14,11 +16,15 @@ const getNotes = asyncHandler(async (req, res) => {
 
 const createNote = asyncHandler(async (req, res) => {
     const {text, completed} = req.body;
-    if (!text || !completed) {
+    if (!text) {
         res.status(400);
         throw new Error("All fields are mandatory") 
     }
-    res.status(201).json({messsage: "create notes"});
+    const note = await Note.create({
+        text, 
+        completed
+    }); 
+    res.status(201).json(note);
 });
 
 //@desc Update note
@@ -26,7 +32,18 @@ const createNote = asyncHandler(async (req, res) => {
 //@access public
 
 const updateNote = asyncHandler(async (req, res) => {
-    res.status(200).json({messsage: `Update notes for ${req.params.id}`});
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+        res.status(404);
+        throw new Error("Note not found");
+    }
+
+    const updatedNote = await Note.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+    );
+    res.status(200).json(updatedNote);
 });
 
 //@desc delete note
@@ -34,7 +51,14 @@ const updateNote = asyncHandler(async (req, res) => {
 //@access public
 
 const deleteNote = asyncHandler(async (req, res) => {
-    res.status(200).json({messsage: `Delete notes for ${req.params.id}`});
+    const note = await Note.findById(req.params.id);
+    if (!note) {
+        res.status(404);
+        throw new Error("Note not found");
+    }
+    await note.deleteOne();
+
+    res.status(200).json(note);
 });
 
 
