@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function App() {
   // State to store tasks
@@ -7,44 +8,63 @@ function App() {
   const [editingTaskId, setEditingTaskId] = useState(null); // State to track which task is being edited
   const [editingText, setEditingText] = useState("");
 
-  // Load tasks from localStorage
+  // Fetch data from the server
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-    setTasks(savedTasks);
+    const fetchTasks = async () => {
+      const response = await axios.get("http://localhost:5000/api/notes");
+      setTasks(response.data);
+    };
+    fetchTasks();
   }, []);
+  // // Load tasks from localStorage
+  // useEffect(() => {
+  //   const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  //   setTasks(savedTasks);
+  // }, []);
 
-  // Save tasks to localStorage
-  useEffect(() => {
-    if (tasks.length > 0) {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
-  }, [tasks]);
+  // // Save tasks to localStorage
+  // useEffect(() => {
+  //   if (tasks.length > 0) {
+  //     localStorage.setItem("tasks", JSON.stringify(tasks));
+  //   }
+  // }, [tasks]);
 
   // Function to handle adding a task
-  const addTask = () => {
+  const addTask = async () => {
     if (taskText.trim() === "") return; // Prevent adding empty tasks
 
     const newTask = {
-      id: Date.now(), // Unique ID for each task
       text: taskText,
       completed: false,
     };
 
-    setTasks([...tasks, newTask]); // Add the new task to the tasks array
-    setTaskText(""); // Clear the input field
+    try {
+      const response = await axios.post("http://localhost:5000/api/notes", newTask);
+      setTasks([...tasks, response.data]); // Add the new task to the tasks array
+      setTaskText(""); // Clear the input field
+    } catch (error) {
+      console.error("Error adding task:", error);
+      // Optionally, you can show an error message to the user
+    }
   };
 
   // Function to handle deleting a task
-  const deleteTask = (id) => {
-    const updateTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updateTasks);
+  const deleteTask = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/notes/${id}`);
+      const updateTasks = tasks.filter((task) => task._id !== id);
+      setTasks(updateTasks);
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
   }
 
   // function to toggle task completion
-  const toggleTaskCompletion = (id) => {
-    const updatedTasks = tasks.map((task) => task.id === id ? {...task, completed: !task.completed } : task );
-
-    setTasks(updatedTasks); //Update the tasks array
+  const toggleTaskCompletion = async (id) => {
+    const task = tasks.find((task) => task._id === id);
+    const updatedTasks = { ...task, completed: !task.completed };
+    const response = await axios.put(`http://localhost:5000/api/notes/${id}`, updatedTasks);
+    setTasks(tasks.map((task) => (task._id === id ? response.data : task)));
   };
 
   // Function to start editing
@@ -54,13 +74,18 @@ function App() {
   };
 
   // Function to save the edited task
-  const saveTask = () => {
-    const updatedTasks = tasks.map((task) =>
-      task.id === editingTaskId ? { ...task, text: editingText } : task
-    );
-    setTasks(updatedTasks);
-    setEditingTaskId(null); // Exit edit mode
-    setEditingText("");
+  const saveTask = async () => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/notes/${editingTaskId}`, { text: editingText });
+      const updatedTasks = tasks.map((task) =>
+        task._id === editingTaskId ? response.data : task
+      );
+      setTasks(updatedTasks);
+      setEditingTaskId(null); // Exit edit mode
+      setEditingText("");
+    } catch (error) {
+      console.error("Error saving task:", error);
+    }
   };
 
   const addTaskByEnterKey = (e) => {
@@ -90,7 +115,7 @@ function App() {
             onChange={(e) => setTaskText(e.target.value)} // Update state on input
             className="border rounded p-2 flex-grow mr-2"
           />
-          <button onClick={addTask} className="bg-blue-500 text-white p-2 rounded">Add Task</button>
+          <button onClick={addTask} className="bg-blue-500 text-white p-2 rounded cursor-pointer">Add Task</button>
         </div>
         {/* Task list */}
         <div className="task-summary">
@@ -100,8 +125,8 @@ function App() {
         </div>
         <ul className="task-list">
           {tasks.map((task) => (
-            <li className="task-item mb-2" key={task.id}>
-              {editingTaskId === task.id ? (
+            <li className="task-item mb-2" key={task._id}>
+              {editingTaskId === task._id ? (
                 <div className="flex">
                   <input
                     type="text"
@@ -110,21 +135,21 @@ function App() {
                     onChange={(e) => setEditingText(e.target.value)}
                     className="border rounded p-2 flex-grow mr-2"
                   />
-                  <button onClick={saveTask} className="bg-green-500 text-white p-2 rounded">Save</button>
+                  <button onClick={saveTask} className="bg-green-500 text-white p-2 rounded cursor-pointer">Save</button>
                 </div>
               ) : (
                 <div className="flex items-center">
                   <input
-                    className="mr-2"
+                    className="mr-2 cursor-pointer"
                     type="checkbox"
                     checked={task.completed}
-                    onChange={() => toggleTaskCompletion(task.id)}
+                    onChange={() => toggleTaskCompletion(task._id)}
                   />
-                  <span className={`flex-grow ${task.completed ? "line-through" : ""}`} onClick={() => toggleTaskCompletion(task.id)} >
+                  <span className={`flex-grow ${task.completed ? "line-through" : ""} cursor-pointer`} onClick={() => toggleTaskCompletion(task._id)} >
                     {task.text}
                   </span>
-                  <button onClick={() => deleteTask(task.id)} className="bg-red-500 text-white p-2 rounded mr-2">Delete</button>
-                  <button onClick={() => startEditing(task.id, task.text)} className="bg-yellow-500 text-white p-2 rounded">Edit</button>
+                  <button onClick={() => deleteTask(task._id)} className="bg-red-500 text-white p-2 rounded mr-2 cursor-pointer">Delete</button>
+                  <button onClick={() => startEditing(task._id, task.text)} className="bg-yellow-500 text-white p-2 rounded cursor-pointer">Edit</button>
                 </div>
               )}
             </li>
