@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import api from "../utils/api";
 
 function Home() {
     // State to store Tasks
@@ -11,7 +12,7 @@ function Home() {
     // Fetch data from the server
     useEffect(() => {
         const fetchTasks = async () => {
-        const response = await axios.get("http://localhost:5000/api/notes");
+        const response = await api.get("/notes");
         setTasks(response.data);
         };
         fetchTasks();
@@ -39,7 +40,7 @@ function Home() {
         };
 
         try {
-        const response = await axios.post("http://localhost:5000/api/notes", newTask);
+        const response = await api.post("/notes", newTask);
         setTasks([...tasks, response.data]); // Add the new task to the tasks array
         setTaskText(""); // Clear the input field
         } catch (error) {
@@ -51,7 +52,7 @@ function Home() {
     // Function to handle deleting a task
     const deleteTask = async (id) => {
         try {
-        await axios.delete(`http://localhost:5000/api/notes/${id}`);
+        await api.delete(`/notes/${id}`);
         const updateTasks = tasks.filter((task) => task._id !== id);
         setTasks(updateTasks);
         } catch (error) {
@@ -63,7 +64,7 @@ function Home() {
     const toggleTaskCompletion = async (id) => {
         const task = tasks.find((task) => task._id === id);
         const updatedTasks = { ...task, completed: !task.completed };
-        const response = await axios.put(`http://localhost:5000/api/notes/${id}`, updatedTasks);
+        const response = await api.put(`/notes/${id}`, updatedTasks);
         setTasks(tasks.map((task) => (task._id === id ? response.data : task)));
     };
 
@@ -76,7 +77,7 @@ function Home() {
     // Function to save the edited task
     const saveTask = async () => {
         try {
-        const response = await axios.put(`http://localhost:5000/api/notes/${editingTaskId}`, { text: editingText });
+        const response = await api.put(`/notes/${editingTaskId}`, { text: editingText });
         const updatedTasks = tasks.map((task) =>
             task._id === editingTaskId ? response.data : task
         );

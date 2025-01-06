@@ -1,17 +1,19 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import api from "../utils/api";
 
 const Signup = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [message, setMessage] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
 
     try {
-    const response = await axios.post("http://localhost:5000/api/users/register", {
+    const response = await api.post("/users/register", {
         username,
         email,
         password,
@@ -20,6 +22,7 @@ const Signup = () => {
         setMessage(response.data.message || "SignUp successful!");
         console.log("Response:", response.data);
         alert("SignUp successful!");
+        navigate("/login");
     } catch (error) {
         console.error("Error:", error.response?.data || error.message);
         setMessage(error.response?.data?.message || "SignUp failed!");
