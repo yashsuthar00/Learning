@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Logout from "../components/Logout";
 import api from "../utils/api";
 
 function Home() {
@@ -104,7 +104,10 @@ function Home() {
 
     return (
         <div className="app container mx-auto p-4">
-        <h1 className="text-3xl font-bold text-blue-500 mb-4">To-Do List</h1>
+        <nav className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl font-bold text-blue-500 mb-4">To-Do List</h1>
+            <Logout />
+        </nav>
         <div className="task-container">
             {/* Input field and button */}
             <div className="task-input flex mb-4">

@@ -31,46 +31,51 @@ const Signup = () => {
 };
 
 return (
-    <div style={{ maxWidth: "400px", margin: "auto", padding: "20px", textAlign: "center" }}>
-        <h2>SignUp</h2>
-        <form onSubmit={handleLogin}>            
-            <div style={{ marginBottom: "10px" }}>
-            <input
-            type="username"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: "100%", padding: "10px" }}
-            />
+    <div className="flex justify-center items-center min-h-screen">
+        <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
+            <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
+            <form onSubmit={handleLogin}>
+            <div className="mb-4">
+                    <input
+                        type="username"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                        className="w-full px-3 py-2 border rounded-md"
+                    />
+                </div>
+                <div className="mb-4">
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="w-full px-3 py-2 border rounded-md"
+                    />
+                </div>
+                <div className="mb-4">
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="w-full px-3 py-2 border rounded-md"
+                    />
+                </div>
+                <button type="submit" className="w-full py-2 bg-blue-500 text-white rounded-md">
+                    Signup
+                </button>
+            </form>
+            {message && <p className="mt-4 text-center text-red-500">{message}</p>}
+            <div className="mt-4 text-center">
+                <p>Already have an account? <a href="/login" className="text-blue-500">Login</a></p>
             </div>
-            <div style={{ marginBottom: "10px" }}>
-            <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: "100%", padding: "10px" }}
-            />
-            </div>
-            <div style={{ marginBottom: "10px" }}>
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                style={{ width: "100%", padding: "10px" }}
-            />
-            </div>
-            <button type="submit" style={{ padding: "10px 20px" }}>
-            Login
-            </button>
-        </form>
-        {message && <p style={{ marginTop: "10px" }}>{message}</p>}
         </div>
-    );
+    </div>
+);
 };
 
 export default Signup;
