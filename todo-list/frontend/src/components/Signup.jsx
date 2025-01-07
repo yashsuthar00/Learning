@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useLoading } from '../context/LoadingContext';
 import { useNavigate } from "react-router-dom";
 import api from "../utils/api";
 
 const Signup = () => {
+    const { loading } = useLoading();
+    const { setLoading } = useLoading();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
@@ -11,6 +14,7 @@ const Signup = () => {
 
     const handleLogin = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
     try {
     const response = await api.post("/users/register", {
@@ -27,11 +31,13 @@ const Signup = () => {
         console.error("Error:", error.response?.data || error.message);
         setMessage(error.response?.data?.message || "SignUp failed!");
         alert("SignUp failed!");
+    } finally {
+        setLoading(false);
     }
 };
 
 return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div style={{ display : loading ? 'none' : 'flex' }} className="flex justify-center items-center min-h-screen">
         <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
             <h2 className="text-2xl font-bold mb-6 text-center">Signup</h2>
             <form onSubmit={handleLogin}>

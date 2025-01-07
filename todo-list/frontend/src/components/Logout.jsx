@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FiLogOut } from "react-icons/fi";
 
-const Navbar = () => {
+const Logout = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -25,4 +25,4 @@ const Navbar = () => {
     );
 };
 
-export default Navbar;
+export default Logout;

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Logout from "../components/Logout";
 import api from "../utils/api";
+import { useLoading } from '../context/LoadingContext';
 
 function Home() {
     // State to store Tasks
+    const { setLoading } = useLoading();
     const [tasks, setTasks] = useState([]);
     const [taskText, setTaskText] = useState(""); // To store input value
     const [editingTaskId, setEditingTaskId] = useState(null); // State to track which task is being edited
@@ -12,11 +14,20 @@ function Home() {
     // Fetch data from the server
     useEffect(() => {
         const fetchTasks = async () => {
-        const response = await api.get("/notes");
-        setTasks(response.data);
+            setLoading(true);
+            try {
+                const response = await api.get("/notes");
+                setTasks(response.data);
+            } catch (error) {
+                console.error("Error fetching tasks:", error);
+                alert("Error fetching tasks");
+            } finally {
+                setLoading(false);
+            }
         };
         fetchTasks();
     }, []);
+
     // // Load tasks from localStorage
     // useEffect(() => {
     //   const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
@@ -30,8 +41,10 @@ function Home() {
     //   }
     // }, [tasks]);
 
+
     // Function to handle adding a task
     const addTask = async () => {
+        setLoading(true);
         if (taskText.trim() === "") return; // Prevent adding empty tasks
 
         const newTask = {
@@ -45,27 +58,42 @@ function Home() {
         setTaskText(""); // Clear the input field
         } catch (error) {
         console.error("Error adding task:", error);
+        alert("Error adding task");
         // Optionally, you can show an error message to the user
+        }   finally {
+            setLoading(false);
         }
     };
 
     // Function to handle deleting a task
     const deleteTask = async (id) => {
+        setLoading(true);
         try {
-        await api.delete(`/notes/${id}`);
-        const updateTasks = tasks.filter((task) => task._id !== id);
-        setTasks(updateTasks);
+            await api.delete(`/notes/${id}`);
+            const updateTasks = tasks.filter((task) => task._id !== id);
+            setTasks(updateTasks);
         } catch (error) {
-        console.error("Error deleting task:", error);
+            console.error("Error deleting task:", error);
+            alert("Error deleting task");
+        } finally {
+            setLoading(false);
         }
     }
 
     // function to toggle task completion
     const toggleTaskCompletion = async (id) => {
-        const task = tasks.find((task) => task._id === id);
-        const updatedTasks = { ...task, completed: !task.completed };
-        const response = await api.put(`/notes/${id}`, updatedTasks);
-        setTasks(tasks.map((task) => (task._id === id ? response.data : task)));
+        setLoading(true);
+        try {
+            const task = tasks.find((task) => task._id === id);
+            const updatedTasks = { ...task, completed: !task.completed };
+            const response = await api.put(`/notes/${id}`, updatedTasks);
+            setTasks(tasks.map((task) => (task._id === id ? response.data : task)));
+        } catch (error) {
+            console.error("Error toggling task completion:", error);
+            alert("Error toggling task completion");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Function to start editing
@@ -76,16 +104,20 @@ function Home() {
 
     // Function to save the edited task
     const saveTask = async () => {
+        setLoading(true);
         try {
-        const response = await api.put(`/notes/${editingTaskId}`, { text: editingText });
-        const updatedTasks = tasks.map((task) =>
-            task._id === editingTaskId ? response.data : task
-        );
-        setTasks(updatedTasks);
-        setEditingTaskId(null); // Exit edit mode
-        setEditingText("");
+            const response = await api.put(`/notes/${editingTaskId}`, { text: editingText });
+            const updatedTasks = tasks.map((task) =>
+                task._id === editingTaskId ? response.data : task
+            );
+            setTasks(updatedTasks);
+            setEditingTaskId(null); // Exit edit mode
+            setEditingText("");
         } catch (error) {
-        console.error("Error saving task:", error);
+            console.error("Error saving task:", error);
+            alert("Error saving task");
+        } finally {
+            setLoading(false);
         }
     };
 
