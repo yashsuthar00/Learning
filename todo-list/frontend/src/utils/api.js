@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create an Axios instance
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Base URL for your backend API
+  baseURL: "https://learning-h41f.onrender.com/api", // Base URL for your backend API
 });
 
 // Add an interceptor to include the Authorization header in every request
