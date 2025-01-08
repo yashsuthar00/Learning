@@ -71,8 +71,8 @@ const Login = () => {
             <div className="fixed bottom-4 right-4 bg-gray-100 p-4 rounded-lg shadow-md">
                 <p className="font-bold">Want a trial?</p>
                 <p>Use these credentials:</p>
-                <p>Email: guest@login.com</p>
-                <p>Password: guest</p>
+                <p>Email: guest@trial.com</p>
+                <p>Password: Guest@login</p>
             </div>
         </div>
     );
